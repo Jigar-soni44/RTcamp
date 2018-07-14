@@ -20,6 +20,10 @@ if [ $var2 -ne 0 ]
 
 then
 
+		sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password password Rh12eL98'
+	
+		sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password Rh12eL98'
+
                 apt-get install mysql-server -y
 
 fi
@@ -199,7 +203,7 @@ server {
 
 EOF
 
-######Creating example.com domain file
+######Creating domain file
 
 cat > $dom <<- "EOF"
 
@@ -217,7 +221,7 @@ server {
 
 
 
-        server_name example.com;
+        server_name ;
 
 
 
@@ -265,9 +269,11 @@ server {
 
 EOF
 
+sed -i "s/server_name/server_name $dom/g" $dom
+
 cd /etc/nginx/sites-enabled/
 
-ln -s /etc/nginx/sites-available/example.com example.com
+ln -s /etc/nginx/sites-available/$dom $dom
 
 cd /usr/share/nginx/html
 
@@ -279,7 +285,7 @@ tar xvf latest.tar.gz
 
 #####Creating MySQL database for wordpress
 
-/usr/bin/mysqladmin -uroot -proot create example.com_db
+/usr/bin/mysqladmin -uroot -pRh12eL98 create example.com_db
 
 cd /usr/share/nginx/html/wordpress
 
@@ -293,7 +299,7 @@ sed -i 's/database_name_here/example.com_db/g' /usr/share/nginx/html/wordpress/w
 
 sed -i 's/username_here/root/g' /usr/share/nginx/html/wordpress/wp-config.php
 
-sed -i 's/password_here/root/g' /usr/share/nginx/html/wordpress/wp-config.php
+sed -i 's/password_here/Rh12eL98/g' /usr/share/nginx/html/wordpress/wp-config.php
 
 
 
@@ -308,4 +314,4 @@ service nginx restart
 /etc/init.d/php7.0-fpm restart
 
 
-echo "Hey website is ready ,open example.com in browser"
+echo "Hey website is ready ,open  in browser"
